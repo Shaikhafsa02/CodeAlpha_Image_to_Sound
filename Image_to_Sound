@@ -1,0 +1,36 @@
+pip install pillow pydub
+
+from PIL import Image
+from pydub import AudioSegment
+
+def image_to_sound(input_image_path, output_audio_path, duration=5000):
+    # Open the image
+    img = Image.open(input_image_path)
+    width, height = img.size
+
+    # Create an empty audio segment
+    audio = AudioSegment.silent(duration=duration)
+
+    for x in range(width):
+        for y in range(height):
+            # Get the RGB color values of the pixel
+            pixel = img.getpixel((x, y))
+            r, g, b = pixel
+
+            # Calculate a frequency based on the color values
+            frequency = (r + g + b) / 3
+
+            # Append a beep sound at the calculated frequency to the audio segment
+            beep = AudioSegment.silent(duration=duration)
+            beep = beep.set_frame_rate(int(frequency))
+            audio += beep
+
+    # Export the audio segment to an audio file
+    audio.export(output_audio_path, format="wav")
+
+if __name__ == "__main__":
+    input_image_path = "input_image.png"  # Replace with the path to your input image
+    output_audio_path = "output_audio.wav"  # Specify the output audio file name
+
+    image_to_sound(input_image_path, output_audio_path)
+    print(f"Image converted to sound and saved as {output_audio_path}")
